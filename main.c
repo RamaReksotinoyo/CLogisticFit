@@ -21,6 +21,10 @@ int main() {
     printf("%f, %f\n", crabs->data[i][0], crabs->data[i][1]);
   }
 
+  n_s = get_n_success(crabs);
+  n_f = get_n_failed(crabs);
+  printf("n_succes: %d, n_failed: %d", n_s, n_f);
+
   for (int i = 0; i < crabs->num_rows; i++) {
     free(crabs->data[i]);
   }

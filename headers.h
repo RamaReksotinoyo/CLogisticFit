@@ -11,6 +11,7 @@ typedef struct {
 } Ndarray; // Definisikan struct Ndarray secara lengkap di sini
 
 Ndarray* readCSV(const char* filename, int maxRecords);
-// int get_n_success(Ndarray* crabs);
+int get_n_success(Ndarray* crabs);
+int get_n_failed(Ndarray* crabs);
 
 #endif  

@@ -73,32 +73,32 @@ Ndarray* readCSV(const char* filename, int maxRecords)
   return crabs;
 }
 
-// int get_n_success(Ndarray* crabs)
-// {
-//   int n_success = 0;
+int get_n_success(Ndarray* crabs)
+{
+  int n_success = 0;
 
-//   for (int i = 0; i < crabs->num_rows; i++)
-//   {
-//     if (crabs->data[i][0] == 1.0)  // Perubahan pada baris ini
-//     {
-//       n_success += 1;
-//     }
-//   }
+  for (int i = 0; i < crabs->num_rows; i++)
+  {
+    if (crabs->data[i][0] == 1.0)  // Perubahan pada baris ini
+    {
+      n_success += 1;
+    }
+  }
   
-//   return n_success;
-// }
+  return n_success;
+}
 
-// int get_n_failed(HorseshoeCrab* crabs, int records)
-// {
-//   int n_failed = 0;
+int get_n_failed(Ndarray* crabs)
+{
+  int n_failed = 0;
 
-//   for (int i = 0; i < records; i++)
-//   {
-//     if (crabs[i].satellite == 0)
-//     {
-//       n_failed += 1;
-//     }
-//   }
+  for (int i = 0; i < crabs->num_rows; i++)
+  {
+    if (crabs->data[i][0] == 0.0)
+    {
+      n_failed += 1;
+    }
+  }
   
-//   return n_failed;
-// }
+  return n_failed;
+}
