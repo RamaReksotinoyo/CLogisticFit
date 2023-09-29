@@ -10,6 +10,7 @@ int main() {
   const char* filename = "hs.csv";
   int maxRecords = 173;
   int n_s, n_f;
+  double pi;
 
   Ndarray* crabs = readCSV(filename, maxRecords);
   if (crabs == NULL) {
@@ -23,13 +24,17 @@ int main() {
 
   n_s = get_n_success(crabs);
   n_f = get_n_failed(crabs);
-  printf("n_succes: %d, n_failed: %d", n_s, n_f);
+  printf("n_succes: %d, n_failed: %d \n", n_s, n_f);
 
-  for (int i = 0; i < crabs->num_rows; i++) {
-    free(crabs->data[i]);
+  double b1[] = {0.0};
+  Ndarray* sigmoid_list = calculate_sigmoid_list(crabs, 0.0, b1);
+  
+  for (int i = 0; i < sigmoid_list->num_rows; i++) {
+      printf("%f\n", sigmoid_list->data[i][0]);
   }
-  free(crabs->data);
-  free(crabs);
+
+  ndarray_free(crabs);
+  ndarray_free(sigmoid_list);
 
   return 0;
 }

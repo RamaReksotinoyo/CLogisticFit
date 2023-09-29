@@ -102,3 +102,44 @@ int get_n_failed(Ndarray* crabs)
   
   return n_failed;
 }
+
+void ndarray_free(Ndarray* matrix){
+  for (int i = 0; i < matrix->num_rows; i++) {
+    free(matrix->data[i]);
+  }
+  free(matrix->data);
+  free(matrix);
+}
+
+
+double sigmoid(double *X, int num_cols, double b0, double *b1) {
+    double logit = b0;
+    double exp_val, pi;
+    
+    for (int i = 0; i < num_cols; i++) {
+        logit += X[i] * b1[i];
+    }
+    
+    exp_val = exp(logit);
+    pi = exp_val / (1 + exp_val);
+    
+    return pi;
+}
+
+Ndarray* calculate_sigmoid_list(Ndarray* matrix, double b0, double *b1) {
+    Ndarray* sigmoid_list = malloc(sizeof(Ndarray));
+    sigmoid_list->num_rows = matrix->num_rows;
+    sigmoid_list->num_cols = 1;
+    sigmoid_list->data = malloc(sigmoid_list->num_rows * sizeof(double*));
+    
+    for (int i = 0; i < sigmoid_list->num_rows; i++) {
+        sigmoid_list->data[i] = malloc(sigmoid_list->num_cols * sizeof(double));
+        
+        // Mengubah tipe data dari float* menjadi double*
+        double* matrix_row = (double*) matrix->data[i];
+        
+        sigmoid_list->data[i][0] = sigmoid(matrix_row, matrix->num_cols, b0, b1);
+    }
+    
+    return sigmoid_list;
+}
