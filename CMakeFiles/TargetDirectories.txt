@@ -1,0 +1,3 @@
+/Users/ramaido/C/RegresiLogistik/CMakeFiles/hello.dir
+/Users/ramaido/C/RegresiLogistik/CMakeFiles/edit_cache.dir
+/Users/ramaido/C/RegresiLogistik/CMakeFiles/rebuild_cache.dir
