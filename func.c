@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 
 Ndarray* readCSV(const char* filename, int maxRecords)
@@ -73,35 +74,6 @@ Ndarray* readCSV(const char* filename, int maxRecords)
   return crabs;
 }
 
-int get_n_success(Ndarray* crabs)
-{
-  int n_success = 0;
-
-  for (int i = 0; i < crabs->num_rows; i++)
-  {
-    if (crabs->data[i][0] == 1.0)  // Perubahan pada baris ini
-    {
-      n_success += 1;
-    }
-  }
-  
-  return n_success;
-}
-
-int get_n_failed(Ndarray* crabs)
-{
-  int n_failed = 0;
-
-  for (int i = 0; i < crabs->num_rows; i++)
-  {
-    if (crabs->data[i][0] == 0.0)
-    {
-      n_failed += 1;
-    }
-  }
-  
-  return n_failed;
-}
 
 void ndarray_free(Ndarray* matrix){
   for (int i = 0; i < matrix->num_rows; i++) {
@@ -184,43 +156,44 @@ double* gradient_b1(Ndarray* matrix, double* pi, double* y, double b0, double* b
 }
 
 void gradient_descent(double *X, double *y, int num_rows, int num_cols, double eta, double tol, double *b0, double *b1, int *iterations, double *log_loss_list) {
-    // Define initial b0 and b1
-    double b0_initial = 0.0;
-    double *b1_initial = malloc(num_cols * sizeof(double));
-    for (int i = 0; i < num_cols; i++) {
-        b1_initial[i] = 0.0;
-    }
-    
+    // Inisialisasi b1 dengan nilai awal
+    // double b1_initial[2] = {0.0, 0.0};
+    srand(time(NULL));
+    double b1_initial[2] = {((double)rand() / RAND_MAX) * 0.01, ((double)rand() / RAND_MAX) * 0.01};
+
     // Make a criteria to run the iteration
     int continue_iteration = 1;
-    
+
     // Running the iteration
     int i = 0;
     while (continue_iteration) {
         // Update i
         i++;
-        
+
         // Calculate success probability (pi) from the current b0 and b1
         Ndarray matrix;
         matrix.num_rows = num_rows;
         matrix.num_cols = num_cols;
         matrix.data = malloc(matrix.num_rows * sizeof(double*));
         for (int j = 0; j < matrix.num_rows; j++) {
-            matrix.data[j] = &X[j * matrix.num_cols];
+            matrix.data[j] = malloc(matrix.num_cols * sizeof(double));
+            for (int k = 0; k < matrix.num_cols; k++) {
+                matrix.data[j][k] = X[j * matrix.num_cols + k];
+            }
         }
-        Ndarray* sigmoid_list = calculate_sigmoid_list(&matrix, b0_initial, b1_initial);
+        Ndarray* sigmoid_list = calculate_sigmoid_list(&matrix, *b0, b1_initial);
         double *pi = malloc(num_rows * sizeof(double));
         for (int j = 0; j < num_rows; j++) {
             pi[j] = sigmoid_list->data[j][0];
         }
-        
+
         // Calculate log loss from the current b0 and b1
         double log_loss = cost_function(&matrix, pi);
         log_loss_list[i - 1] = log_loss;
 
         // Calculate gradient of b0 and b1
         double grad_b0 = gradient_b0(&matrix, pi);
-        double* grad_b1 = gradient_b1(&matrix, pi, y, b0_initial, b1_initial);
+        double* grad_b1 = gradient_b1(&matrix, pi, y, *b0, b1_initial);
 
         // Update b0 and b1
         *b0 -= eta * grad_b0;
@@ -238,14 +211,52 @@ void gradient_descent(double *X, double *y, int num_rows, int num_cols, double e
         free(grad_b1);
         free(sigmoid_list->data);
         free(sigmoid_list);
+        for (int j = 0; j < matrix.num_rows; j++) {
+            free(matrix.data[j]);
+        }
         free(matrix.data);
     }
 
     // Store the number of iterations
     *iterations = i;
 
-    // Free memory for initial b1
-    free(b1_initial);
+    // Print final b0 and b1
+    printf("Nilai akhir b0: %f\n", *b0);
+    for (int j = 0; j < num_cols; j++) {
+        printf("Nilai akhir b1[%d]: %f\n", j, b1[j]);
+    }
+}
+
+
+
+int get_n_success(Ndarray* crabs)
+{
+  int n_success = 0;
+
+  for (int i = 0; i < crabs->num_rows; i++)
+  {
+    if (crabs->data[i][0] == 1.0)  // Perubahan pada baris ini
+    {
+      n_success += 1;
+    }
+  }
+  
+  return n_success;
+}
+
+int get_n_failed(Ndarray* crabs)
+{
+  int n_failed = 0;
+
+  for (int i = 0; i < crabs->num_rows; i++)
+  {
+    if (crabs->data[i][0] == 0.0)
+    {
+      n_failed += 1;
+    }
+  }
+  
+  return n_failed;
 }
 
 
